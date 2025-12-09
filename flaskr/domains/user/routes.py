@@ -1,10 +1,10 @@
-from flask import Blueprint, jsonify, request
+from flask import jsonify, request
 from flask.views import MethodView
 
-from flaskr.repository.user import UserRepository
-from flaskr.services.user import UserService
+from flaskr.domains.user.repositories import UserRepository
+from flaskr.domains.user.services import UserService
 
-bp = Blueprint("user", __name__, url_prefix="/users")
+from . import bp
 
 user_repo = UserRepository()
 user_service = UserService(user_repository=user_repo)
@@ -33,6 +33,18 @@ class UserListAPI(MethodView):
             return jsonify({"error": "Unknow error"}), 500
 
 
+class UserDetailAPI(MethodView):
+    def get(self, user_id: int):
+        user = user_service.get_by_id(user_id=user_id)
+        return jsonify(user)
+
+
 bp.add_url_rule(
-    "/", view_func=UserListAPI.as_view("user_list"), methods=["GET", "POST"]
+    "/", view_func=UserListAPI.as_view("user_list_api"), methods=["GET", "POST"]
+)
+
+bp.add_url_rule(
+    "/<int:user_id>",
+    view_func=UserDetailAPI.as_view("user_detail_api"),
+    methods=["GET"],
 )

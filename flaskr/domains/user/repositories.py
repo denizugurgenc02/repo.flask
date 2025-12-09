@@ -1,5 +1,5 @@
-from flaskr.extensions import db
-from flaskr.models.user import User
+from flaskr.core.extensions import db
+from flaskr.domains.user.models import User
 
 
 class UserRepository:
@@ -15,7 +15,7 @@ class UserRepository:
         db.session.commit()
         return new_user
 
-    def delete(self, user: User):
+    def delete(self, user: User) -> bool:
         db.session.delete(user)
         db.session.commit()
         return True
