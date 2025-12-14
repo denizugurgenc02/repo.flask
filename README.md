@@ -11,20 +11,27 @@
 1. Python 3.12+
 2. Poetry
 
-
-### Create Tables
-This command initializes the database schema based on your current SQLAlchemy models.\
-`flask init-db`
-
-
-### Run the App
-Start the development server using the Flask CLI. The application will be accessible at \
-`flask run`
-
-
-### Database Migrations (Schema Changes)
+## Database Migrations (Schema Changes)
 When you make changes to your SQLAlchemy models, use the following commands; \
 - If you haven't migrations file -> `flask db init`
 - Create Migration File ->
 `flask db migrate -m "Added new models"`\
 - Apply Migrations -> `flask db upgrade`
+
+## With Docker
+
+### Build a image
+docker compose build
+
+### Up the image
+docker compose up
+
+## Without docker
+
+### Create Tables
+This command initializes the database schema based on your current SQLAlchemy models.\
+`flask init-db`
+
+### Run the App
+Start the development server using the Flask CLI. The application will be accessible at \
+`flask run`
