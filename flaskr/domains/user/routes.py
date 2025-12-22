@@ -34,6 +34,16 @@ class UserDetailAPI(BaseRoutes):
         user = self.service.get_by_id(item_id=user_id)
         return self.format_response(data=user)
 
+    def patch(self, user_id: int):
+        data = request.get_json()
+
+        updated_user = self.service.update_user(user_id=user_id, data=data)
+        return self.format_response(updated_user)
+
+    def delete(self, user_id: int):
+        response = self.service.delete_user(user_id=user_id)
+        return self.format_response({"deletion": response})
+
 
 bp.add_url_rule(
     "/", view_func=UserListAPI.as_view("user_list_api"), methods=["GET", "POST"]
@@ -42,5 +52,5 @@ bp.add_url_rule(
 bp.add_url_rule(
     "/<int:user_id>",
     view_func=UserDetailAPI.as_view("user_detail_api"),
-    methods=["GET"],
+    methods=["GET", "PATCH", "DELETE"],
 )

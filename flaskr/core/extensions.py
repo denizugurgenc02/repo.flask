@@ -1,12 +1,11 @@
 from datetime import datetime, timezone
-from typing import Any, Generic, List, Optional, Type, TypeVar
+from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
 
 from flask import Response, jsonify
 from flask.views import MethodView
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, select
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import DeclarativeBase, mapped_column
 
 
@@ -45,28 +44,27 @@ class BaseRepository(Generic[T]):
     def get_by_id(self, item_id: int) -> Optional[T]:
         return db.session.get(self.model, item_id)
 
-    def update(self):
-        pass
+    def update(self, item_id: int, data: Dict) -> T:
+        entity = db.session.get(self.model, item_id)
 
-    def add(self, entity: T) -> T | None:
-        try:
-            db.session.add(entity)
-            db.session.commit()
-            return entity
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            print(f"{self.model.__name__} can not create. error {e}")
-            return None
+        for key, value in data.items():
+            if hasattr(entity, key) and key != "id":
+                setattr(entity, key, value)
 
-    def delete(self, entity: T) -> T | None:
-        try:
-            db.session.delete(entity)
-            db.session.commit()
-            return entity
-        except Exception as e:
-            db.session.rollback()
-            print(f"{self.model.__name__} can not delete. error {e}")
-            return None
+        db.session.commit()
+        return entity
+
+    def add(self, entity: T) -> T:
+        db.session.add(entity)
+        db.session.commit()
+        return entity
+
+    def delete(self, item_id: int) -> bool:
+        entity = self.get_by_id(item_id=item_id)
+        db.session.delete(entity)
+        db.session.commit()
+
+        return True
 
 
 db = SQLAlchemy(model_class=BaseModel)

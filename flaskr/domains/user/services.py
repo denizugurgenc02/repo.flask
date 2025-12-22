@@ -13,7 +13,7 @@ class UserService:
         user = self.repository.get_by_id(item_id=item_id)
 
         if user is None:
-            abort(404)
+            abort(404, description="There is no user")
 
         response = user.serialize
         response["role"] = {
@@ -51,3 +51,11 @@ class UserService:
             )
         )
         return new_user.serialize
+
+    def update_user(self, user_id: int, data: Dict) -> Dict | None:
+        self.get_by_id(item_id=user_id)
+        return self.repository.update(item_id=user_id, data=data).serialize
+
+    def delete_user(self, user_id: int) -> bool:
+        self.get_by_id(item_id=user_id)
+        return self.repository.delete(item_id=user_id)
