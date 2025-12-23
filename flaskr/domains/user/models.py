@@ -1,16 +1,37 @@
-from flaskr.core.extensions import db
+from datetime import datetime, timezone
+from typing import TYPE_CHECKING, Dict
+
+from sqlalchemy import DateTime, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from flaskr.core.extensions import BaseModel, mapped_foreign_key
+
+if TYPE_CHECKING:
+    from flaskr.domains.role.models import Role
 
 
-class User(db.Model):
+class User(BaseModel):
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    username: Mapped[str] = mapped_column(String(32), unique=True)
+    password: Mapped[str] = mapped_column(String(128))
+    display_name: Mapped[str] = mapped_column(String(16), unique=True)
+    email: Mapped[str] = mapped_column(String(64), unique=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=lambda: datetime.now(timezone.utc)
+    )
 
-    def __repr__(self):
-        return f"<User {self.email}>"
+    role_id: Mapped[int] = mapped_foreign_key("roles.id")
+    role: Mapped["Role"] = relationship(back_populates="users")
 
     @property
-    def serialize(self):
-        return {"id": self.id, "name": self.name, "email": self.email}
+    def serialize(self) -> Dict:
+        return {
+            "id": self.id,
+            "username": self.username,
+            "password": self.password,
+            "display_name": self.display_name,
+            "email": self.email,
+            "created_at": self.created_at.isoformat(),
+        }

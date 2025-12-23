@@ -12,7 +12,8 @@ dependencies = [
     "python-dotenv (>=1.2.1,<2.0.0)",
     "flask-sqlalchemy (>=3.1.1,<4.0.0)",
     "psycopg2-binary (>=2.9.11,<3.0.0)",
-    "flask-migrate (>=4.1.0,<5.0.0)"
+    "flask-migrate (>=4.1.0,<5.0.0)",
+    "injector (>=0.23.0,<0.24.0)"
 ]
 
 

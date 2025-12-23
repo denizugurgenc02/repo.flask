@@ -12,7 +12,10 @@ class Config:
 
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False  # SQLAlchemy
     SQLALCHEMY_ECHO: bool = False  # SQLAlchemy
-    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
+    SQLALCHEMY_DATABASE_URI = (
+        os.environ.get("SQLALCHEMY_DATABASE_URI")
+        or "postgresql://admin:asd123@localhost:5430/flask-db"
+    )
 
     FLASK_MIGRATE_TABLE: str = "alembic_version"  # Flask-Migrate
 

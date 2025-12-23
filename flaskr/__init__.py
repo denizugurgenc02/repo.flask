@@ -4,6 +4,7 @@ from pathlib import Path
 from flask import Blueprint, Flask
 
 from flaskr.core.config import config_by_name
+from flaskr.core.error_handler import ErrorHandler
 from flaskr.core.extensions import db, migrate
 
 DEFAULT_CONFIG = "development"
@@ -51,6 +52,8 @@ def create_app(config_name: str = DEFAULT_CONFIG):
 
     db.init_app(app)
     migrate.init_app(app, db)
+    ErrorHandler.init_app(app)
+    app.json.sort_keys = False
 
     with app.app_context():
         load_all_models()

@@ -1,42 +1,48 @@
-from flask import jsonify, request
-from flask.views import MethodView
+from flask import request
 
-from flaskr.domains.user.repositories import UserRepository
+from flaskr.core.extensions import BaseRoutes
 from flaskr.domains.user.services import UserService
 
 from . import bp
 
-user_repo = UserRepository()
-user_service = UserService(user_repository=user_repo)
 
+class UserListAPI(BaseRoutes):
+    service = UserService()
 
-class UserListAPI(MethodView):
-
-    def get(self):
-        users_data = user_service.list_users()
-        return jsonify(users_data)
+    def get(self):  # Return all users
+        users_data = self.service.list_users()
+        return self.format_response(data=users_data)
 
     def post(self):
         data = request.get_json()
+        new_user = self.service.create_new_user(
+            username=data.get("username"),
+            password=data.get("password"),
+            display_name=data.get("display_name"),
+            email=data.get("email"),
+            role_id=data.get("role_id"),
+        )
 
-        if not data or "name" not in data or "email" not in data:
-            return jsonify({"error": "empty or wrong data."}), 400
-
-        try:
-            new_user = user_service.create_new_user(
-                name=data["name"], email=data["email"]
-            )
-            return jsonify(new_user), 201
-        except ValueError as e:
-            return jsonify({"error": str(e)}), 409  # Conflict
-        except Exception:
-            return jsonify({"error": "Unknow error"}), 500
+        response = self.format_response(data=new_user)
+        return response, 201
 
 
-class UserDetailAPI(MethodView):
+class UserDetailAPI(BaseRoutes):
+    service = UserService()
+
     def get(self, user_id: int):
-        user = user_service.get_by_id(user_id=user_id)
-        return jsonify(user)
+        user = self.service.get_by_id(item_id=user_id)
+        return self.format_response(data=user)
+
+    def patch(self, user_id: int):
+        data = request.get_json()
+
+        response = self.service.update_user(user_id=user_id, data=data)
+        return self.format_response(data=response)
+
+    def delete(self, user_id: int):
+        response = self.service.delete_user(user_id=user_id)
+        return self.format_response({"deletion": response})
 
 
 bp.add_url_rule(
@@ -46,5 +52,5 @@ bp.add_url_rule(
 bp.add_url_rule(
     "/<int:user_id>",
     view_func=UserDetailAPI.as_view("user_detail_api"),
-    methods=["GET"],
+    methods=["GET", "PATCH", "DELETE"],
 )
