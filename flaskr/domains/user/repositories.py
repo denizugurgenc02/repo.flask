@@ -2,7 +2,7 @@ from typing import Optional
 
 from sqlalchemy import select
 
-from flaskr.core.extensions import BaseRepository, db
+from flaskr.core.base.repository import BaseRepository, db
 from flaskr.domains.user.models import User
 
 

@@ -1,11 +1,7 @@
-from typing import List
-
+from flaskr.core.base.services import BaseService
 from flaskr.domains.role.repositories import RoleRepository
 
 
-class RoleService:
+class RoleService(BaseService):
+    repository: RoleRepository
     repository = RoleRepository()
-
-    def list_roles(self) -> List:
-        roles = self.repository.get_all()
-        return [role.serialize for role in roles]

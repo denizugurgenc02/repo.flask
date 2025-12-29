@@ -1,4 +1,4 @@
-from flaskr.core.extensions import BaseRepository
+from flaskr.core.base.repository import BaseRepository
 from flaskr.domains.role.models import Role
 
 

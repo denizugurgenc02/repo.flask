@@ -1,6 +1,6 @@
 from flask import request
 
-from flaskr.core.extensions import BaseRoutes
+from flaskr.core.base.routes import BaseRoutes
 from flaskr.domains.user.services import UserService
 
 from . import bp
@@ -10,7 +10,7 @@ class UserListAPI(BaseRoutes):
     service = UserService()
 
     def get(self):  # Return all users
-        users_data = self.service.list_users()
+        users_data = self.service.list_items()
         return self.format_response(data=users_data)
 
     def post(self):
@@ -37,11 +37,11 @@ class UserDetailAPI(BaseRoutes):
     def patch(self, user_id: int):
         data = request.get_json()
 
-        response = self.service.update_user(user_id=user_id, data=data)
+        response = self.service.update_item(item_id=user_id, data=data)
         return self.format_response(data=response)
 
     def delete(self, user_id: int):
-        response = self.service.delete_user(user_id=user_id)
+        response = self.service.delete_item(item_id=user_id)
         return self.format_response({"deletion": response})
 
 

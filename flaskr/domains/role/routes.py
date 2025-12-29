@@ -1,4 +1,4 @@
-from flaskr.core.extensions import BaseRoutes
+from flaskr.core.base.routes import BaseRoutes
 from flaskr.domains.role.services import RoleService
 
 from . import bp
@@ -8,7 +8,7 @@ class RoleListAPI(BaseRoutes):
     service = RoleService()
 
     def get(self):  # Return all roles
-        roles_data = self.service.list_roles()
+        roles_data = self.service.list_items()
         return self.format_response(data=roles_data)
 
 
