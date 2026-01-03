@@ -1,4 +1,4 @@
-from typing import Dict, Generic, List, Optional, Type, TypeVar
+from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
 
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
@@ -16,6 +16,11 @@ class BaseRepository(Generic[T]):
 
     def get_by_id(self, item_id: int) -> Optional[T]:
         return db.session.get(self.model, item_id)
+
+    def get_by_name(self, column_name: str, value: Any) -> Optional[T]:
+        filter_criteria = {column_name: value}
+        query = select(self.model).filter_by(**filter_criteria)
+        return db.session.execute(query).one_or_none()
 
     def update(self, item_id: int, data: Dict) -> bool:
         entity = db.session.get(self.model, item_id)
