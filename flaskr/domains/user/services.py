@@ -31,8 +31,9 @@ class UserService(BaseService):
     ) -> Dict | None:
         return self.create_new_item(
             model_class=User,
-            func_name="get_by_username",
+            func_name="get_by_name",
             unique_key=username,
+            stun_name="username",
             username=username,
             password=password,
             display_name=display_name,

@@ -35,6 +35,7 @@ class ProductService(BaseService):
             model_class=Product,
             func_name="get_by_name",
             unique_key=name,
+            stun_name="name",
             price=price,
             stock=stock,
             name=name,
